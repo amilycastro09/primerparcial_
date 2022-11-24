@@ -1,44 +1,86 @@
 package mi.primer.parcial.demo.controllers;
 
-
+import mi.primer.parcial.demo.models.articulo;
+import mi.primer.parcial.demo.repository.ArticuloRepository;
+import mi.primer.parcial.demo.services.ArticuloService;
+import mi.primer.parcial.demo.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-public class CategoriaController {
+public class ArticuloController {
+
     @Autowired
-    private CategoriaRepository categoriaRepository;
+    private ArticuloService articuloService;
+    @Autowired
+    private JWTUtil jwtUtil;
 
-    @PostMapping("/categoria")
-    public ResponseEntity crearCategoria(@RequestBody Categoria categoria){
+    @PostMapping("/articulo")
+    public ResponseEntity crearArticulo(@RequestBody articulo articulo,@RequestHeader(value = "Authorization") String token){
         try {
-            categoriaRepository.save(categoria);
-            return new ResponseEntity(categoria, HttpStatus.CREATED);
+            if(jwtUtil.getKey(token) == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+            }
+            return articuloService.createArticulo(articulo);
         }catch (Exception e){
-            return ResponseEntity.badRequest().build();
-
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
         }
 
-
-
     }
-    @GetMapping("/categorias")
-    public ResponseEntity listarCategoria(){
-
-        List<Categoria> categorias= categoriaRepository.findAll();
-        if(categorias.isEmpty()){
-            return ResponseEntity.notFound().build();
+    @GetMapping("/articulo/{codigo}")
+    public ResponseEntity listaPorCodigo(@PathVariable String codigo,@RequestHeader(value = "Authorization") String token){
+        try {
+            if(jwtUtil.getKey(token) == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+            }
+            return articuloService.getArticuloByCodigo(codigo);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
         }
-        return new ResponseEntity(categorias,HttpStatus.OK);
-
 
     }
+
+    @PutMapping("/articulo/{codigo}")
+    public ResponseEntity modificarArticulo(@PathVariable String codigo, @RequestBody articulo articulo,@RequestHeader(value = "Authorization") String token) {
+        try {
+            if(jwtUtil.getKey(token) == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+            }
+            return articuloService.editArticulo(codigo,articulo);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+        }
+
+    }
+
+    @DeleteMapping("/articulo/{codigo}")
+    public ResponseEntity eliminarArticulo(@PathVariable String codigo,@RequestHeader(value = "Authorization") String token){
+        try {
+            if(jwtUtil.getKey(token) == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+            }
+            return articuloService.deleteArticuloByCodigo(codigo);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+        }
+    }
+    @GetMapping("/articulos")
+    public ResponseEntity listarArticulo(@RequestHeader(value = "Authorization") String token){
+        try {
+            if(jwtUtil.getKey(token) == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+            }
+            return articuloService.allArticulos();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token no valido");
+        }
+
+    }
+
 
 }
