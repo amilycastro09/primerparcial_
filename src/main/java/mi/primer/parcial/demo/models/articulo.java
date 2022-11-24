@@ -1,6 +1,14 @@
 package mi.primer.parcial.demo.models;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@Entity
 
 public class articulo {
 

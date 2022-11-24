@@ -12,15 +12,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-
 public class WebSecurityConfig  {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws  Exception{
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                //.antMatchers("/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/articulo").permitAll()
-                .antMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                .antMatchers("/**").permitAll()
+                //    .antMatchers(HttpMethod.POST,"/usuario").permitAll()
+                //    .antMatchers(HttpMethod.POST,"/auth/login").permitAll()
                 .anyRequest().permitAll();
         return http.build();
     }
