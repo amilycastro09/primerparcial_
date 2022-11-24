@@ -6,8 +6,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ParcialApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
 
 }
