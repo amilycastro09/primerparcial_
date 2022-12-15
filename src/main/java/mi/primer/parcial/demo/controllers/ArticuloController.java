@@ -45,6 +45,7 @@ public class ArticuloController {
 
     }
 
+
     @PutMapping("/articulo/{codigo}")
     public ResponseEntity modificarArticulo(@PathVariable String codigo, @RequestBody articulo articulo,@RequestHeader(value = "Authorization") String token) {
         try {

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 @Service
-public class UsuarioServicelmpl implements UsuarioService{
+public class UsuarioServicelmpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
@@ -22,11 +22,11 @@ public class UsuarioServicelmpl implements UsuarioService{
 
     @Override
     public ResponseEntity<Usuario> getUserById(Long id) {
-        Optional<Usuario> usuario= usuarioRepository.findById(id);
-        if (usuario.isPresent()){
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
             return new ResponseEntity(usuario, HttpStatus.OK);
         }
-        return  ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build();
     }
 
     @Override
@@ -35,8 +35,8 @@ public class UsuarioServicelmpl implements UsuarioService{
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
             usuarioRepository.save(usuario);
-            return new ResponseEntity(usuario,HttpStatus.CREATED);
-        }catch (Exception e){
+            return new ResponseEntity(usuario, HttpStatus.CREATED);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
 
         }
@@ -44,38 +44,38 @@ public class UsuarioServicelmpl implements UsuarioService{
 
     @Override
     public ResponseEntity<List<Usuario>> allUsers() {
-        List<Usuario> usuarios= usuarioRepository.findAll();
-        if(usuarios.isEmpty()){
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        if (usuarios.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity(usuarios,HttpStatus.OK);
+        return new ResponseEntity(usuarios, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<Usuario>> allUsersByNameAndLastName(String nombre, String apellidos) {
-        List<Usuario> usuarios= usuarioRepository.findAllByNombreAndApellidos(nombre, apellidos);
-        if(usuarios.isEmpty()){
+        List<Usuario> usuarios = usuarioRepository.findAllByNombreAndApellidos(nombre, apellidos);
+        if (usuarios.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity(usuarios,HttpStatus.OK);
+        return new ResponseEntity(usuarios, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<Usuario>> allUsersByName(String nombre) {
-        List<Usuario> usuarios= usuarioRepository.findAllByNombre(nombre);
-        if(usuarios.isEmpty()){
+        List<Usuario> usuarios = usuarioRepository.findAllByNombre(nombre);
+        if (usuarios.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity(usuarios,HttpStatus.OK);
+        return new ResponseEntity(usuarios, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<Usuario>> allUsersByLastName(String apellidos) {
-        List<Usuario> usuarios= usuarioRepository.findAllByApellidos( apellidos);
-        if(usuarios.isEmpty()){
+        List<Usuario> usuarios = usuarioRepository.findAllByApellidos(apellidos);
+        if (usuarios.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity(usuarios,HttpStatus.OK);
+        return new ResponseEntity(usuarios, HttpStatus.OK);
     }
 
     @Override
@@ -100,8 +100,6 @@ public class UsuarioServicelmpl implements UsuarioService{
             }
 
 
-
-
         }
         return ResponseEntity.notFound().build();
     }
@@ -109,9 +107,9 @@ public class UsuarioServicelmpl implements UsuarioService{
     @Override
     public ResponseEntity<Usuario> deleteUserById(Long id) {
         Optional<Usuario> usuarioBD = usuarioRepository.findById(id);
-        if(usuarioBD.isPresent()){
+        if (usuarioBD.isPresent()) {
             usuarioRepository.delete(usuarioBD.get());
-            return  ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build();
 
         }
 
@@ -121,15 +119,25 @@ public class UsuarioServicelmpl implements UsuarioService{
 
     @Override
     public ResponseEntity login(String correo, String password) {
-        try{
+        try {
             Usuario usuario = usuarioRepository.findByCorreo(correo);
-            if(passwordEncoder.matches(password,usuario.getPassword())){
-                String token = jwtUtil.create(String.valueOf(usuario.getId()),usuario.getCorreo());
+            if (passwordEncoder.matches(password, usuario.getPassword())) {
+                String token = jwtUtil.create(String.valueOf(usuario.getId()), usuario.getCorreo());
                 return ResponseEntity.ok(token);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity getUserByCorreo(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo);
+        if (usuario != null) {
+            return new ResponseEntity(usuario, HttpStatus.OK);
+        }
+        return ResponseEntity.notFound().build();
+
     }
 }
